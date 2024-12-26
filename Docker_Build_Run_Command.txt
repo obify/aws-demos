@@ -1,0 +1,9 @@
+docker build -t admin-api .
+Above commands builds docker image from Dockerfile expecting docker file is in same folder hence . at the end.
+The abover command will create a dcoker image with name as admin-api.
+
+docker run -d -p 9000:9090 -e MONGO_URL="mongodb://user:password@IP:PORT" admin-api
+Above commands creates a docker container and and runs it in demon mode(background)
+on machine port 9000 and exposes the internal express app 9090 port to host machine port of 9000.
+-e helps pass environment variable and its value
+image from where container will run is admin-api
