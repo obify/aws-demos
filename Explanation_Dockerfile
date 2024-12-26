@@ -1,0 +1,67 @@
+1. FROM node:17.9.0-slim
+Purpose: Specifies the base image for your Docker image.
+Details:
+node:17.9.0-slim: A lightweight version of Node.js 17.9.0.
+This provides a minimal Node.js environment to reduce image size while keeping necessary dependencies for running a Node.js application.
+
+2. LABEL maintainer="Obify"
+Purpose: Adds metadata to the image, specifying the maintainer of the Docker image.
+Details:
+This is purely informational and does not affect the functionality of the image.
+
+3. RUN useradd adminui
+Purpose: Creates a new user named adminui.
+Details:
+This user is often created to avoid running the application as the root user for security reasons.
+
+4. WORKDIR /app
+Purpose: Sets the working directory for subsequent commands in the Dockerfile and for the container.
+Details:
+All subsequent commands like RUN, CMD, and COPY will execute relative to this directory.
+If the directory /app doesn’t exist, Docker creates it.
+
+5. RUN chown adminui /app /home
+Purpose: Changes the ownership of the /app and /home directories to the adminui user.
+Details:
+Ensures that the adminui user has permissions to access and modify these directories. 
+This is critical for proper permissions during runtime when the container switches to the adminui user.
+
+6. COPY . .
+Purpose: Copies files from the build context (on the host machine) into the container.
+Details:
+The . on the left refers to the current directory of the build context.
+The . on the right refers to the current working directory in the container (set earlier to /app).
+
+7. RUN npm install
+Purpose: Installs the Node.js dependencies for your application.
+Details:
+It uses the package.json and package-lock.json files to determine the dependencies to install.
+The installed dependencies will be part of the image.
+
+8. EXPOSE 9090
+Purpose: Informs Docker and users of the image that the application listens on port 3000.
+Details:
+This doesn’t actually publish the port; you still need to use the -p or --publish flag when running the container to map the container's port to a port on the host.
+
+9. USER adminui
+Purpose: Specifies that the container should switch to the adminui user for subsequent operations and when it runs.
+Details:
+Running as a non-root user improves security by limiting permissions in the container.
+
+10. CMD ["npm", "start"]
+Purpose: Specifies the default command to execute when the container starts.
+Details:
+npm start runs the script defined under the start key in your package.json file.
+This is the entry point of your application.
+
+
+What Happens During the Build and Run Process
+A base Node.js image is used.
+A new user (adminui) is created.
+The working directory is set to /app.
+Permissions are adjusted for the adminui user.
+Your application files are copied into the container.
+Dependencies are installed.
+The container declares it will listen on port 9090.
+The container switches to the adminui user.
+When the container starts, it runs npm start.
